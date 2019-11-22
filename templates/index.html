@@ -15,44 +15,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='../static/css/style.css') }}">
   </head>
   <body>
       <header>
         <div id="top-bar">
-          <img src="../img/promo.jpg" alt="promo">
+          <img src="../static/promo.jpg" alt="promo">
         </div>
         <div id="promo">
           <div id="ticket">
-            <a href=""><img src="../img/ticket.PNG" alt=""> Ticketbox</a>
+            <a href=""><img src="../static/ticket.PNG" alt=""> Ticketbox</a>
           </div>
           <div id="hotel">
-            <a href=""><img src="../img/hotel.PNG" alt=""> Đặt khách sạn</a>
+            <a href=""><img src="../static/hotel.PNG" alt=""> Đặt khách sạn</a>
           </div>
           <div id="plane">
-            <a href=""><img src="../img/plane.PNG" alt=""> Đặt vé máy bay </a>
+            <a href=""><img src="../static/plane.PNG" alt=""> Đặt vé máy bay </a>
           </div>
         </div>
         <div id="search-bar">
-          <img src="../img/tiki.PNG" alt="">
-          <img src="../img/tikinow.png" alt="">
+          <img src="../static/tiki.PNG" alt="">
+          <img src="../static/tikinow.png" alt="">
           <div class="form">
             <input type="text" size="100" placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn">
             <button><i class="fas fa-search"></i> Tìm kiếm</button>
           </div> 
-          <div id="product-dropdown">
+        </div>
+        <div id="product-dropdown">
             <a href="" class="menu"><i class="fas fa-bars"></i> DANH MỤC SẢN PHẨM</a>
             <div id="dropdown-content">
-              <a href="">Điện Thoại - Máy Tính Bảng</a>
-              <hr>
-              <a href="">Voucher - Dịch vụ - Thẻ Cào</a>
-              <hr>
-              
+              {% for category in categories%}
+                {%if 'Voucher' in category%}
+                <a  href="#">{{category[0]}}</a>
+                {%else%}
+                <a  href="#">{{category[0]}}</a>
+                <hr>
+                {%endif%}
+              {%endfor%}
             </div>
           </div>
-        </div>
       </header>  
 
+
+      <section id="category">
+        {% for category in categories%}
+        <div class="card" style="width: 22rem;">
+            <img src="#" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{category[0]}}</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="btn btn-primary">See More</a>
+            </div>
+          </div>
+      {%endfor%}
+    </section>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
