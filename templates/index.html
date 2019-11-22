@@ -41,34 +41,12 @@
             <button><i class="fas fa-search"></i> Tìm kiếm</button>
           </div> 
         </div>
-        <div id="product-dropdown">
-            <a href="" class="menu"><i class="fas fa-bars"></i> DANH MỤC SẢN PHẨM</a>
-            <div id="dropdown-content">
-              {% for category in categories%}
-                {%if 'Voucher' in category%}
-                <a  href="#">{{category[0]}}</a>
-                {%else%}
-                <a  href="#">{{category[0]}}</a>
-                <hr>
-                {%endif%}
-              {%endfor%}
-            </div>
-          </div>
-      </header>  
+        
+        {%block content%}
 
 
-      <section id="category">
-        {% for category in categories%}
-        <div class="card" style="width: 22rem;">
-            <img src="#" class="card-img-top" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">{{category[0]}}</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">See More</a>
-            </div>
-          </div>
-      {%endfor%}
-    </section>
+        
+        {%endblock%}
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

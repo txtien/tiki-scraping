@@ -145,6 +145,7 @@ header {
     justify-content: center;
     grid-column-gap: 5%;
     grid-row-gap: 20px;
+    margin-top:20px;
 }
 
 #category .card {
