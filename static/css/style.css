@@ -139,14 +139,36 @@ header {
 }
 
 /* ----------------------------- */
-#category  {
+
+#display {
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-areas:
+    "a b";
+    grid-gap: 20px;
+    width: 60%;
+}
+
+
+#category {
+    height: 100vh;
+    width: wrap;
+    margin-top:20px;
+    padding-left:20px;
+    grid-area: a;
+}
+
+
+#products  {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
     justify-content: center;
-    grid-column-gap: 5%;
+    grid-column-gap: auto;
     grid-row-gap: 20px;
     margin-top:20px;
+    grid-area: b;
 }
+
+
 
 #category .card {
     border: none;
@@ -154,8 +176,6 @@ header {
 
 /* Aside */
 #side-menu {
-    height: 100vh;
-    width: 20vw;
-    margin-top:20px;
-    padding-left:20px;
+    
 }
+

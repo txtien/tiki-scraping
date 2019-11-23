@@ -15,22 +15,48 @@ def get_categories():
     return categories
 
 
-def check_category(name):
-    cursor.execute("SELECT DISTINCT c.url, pcs.cate_lon FROM pcs JOIN categories as c ON pcs.cat_id = c.id;")
-    check_list = cursor.fetchall()
-    
-    name_list = []
-    for item in check_list:
-        if name == item[0]:
-            name_list.append(item[1])
-    return name_list
+
+def get_sub_category(category_name):
+    cursor.execute(f"SELECT b.name FROM categories a LEFT JOIN categories b ON a.id = b.parent_id WHERE a.name LIKE '{category_name}';")
+    sub_categories = cursor.fetchall()
+
+    return sub_categories
 
 
-def get_product(name):
-    cursor.execute(f"SELECT p.name FROM pcs JOIN products as p ON pcs.cat_id = p.cat_id WHERE cate_lon LIKE '{name}';")
-    product_list = cursor.fetchall()
+def get_all_sub(category_id):
+    cursor.execute(f"SELECT id FROM categories WHERE parent_id = {category_id};")
+    subs = tuple(x[0] for x in cursor.fetchall())
+    result = []
+    while subs:
+#         result.extend(subs)
+        result = subs
+        cursor.execute(f"SELECT id FROM categories WHERE parent_id IN {subs}")
+        subs = tuple(x[0] for x in cursor.fetchall())
+    return result
 
-    return product_list
+
+def get_product(category_name,page, command = None):
+    cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{category_name}';")
+    id_ = cursor.fetchall()[0][0]
+    if len(get_all_sub(id_)) != 0:
+        cursor.execute(f"SELECT name, img FROM products WHERE cat_id IN {get_all_sub(id_)} LIMIT 12 OFFSET {page*12};")
+        products = cursor.fetchall()
+    else:
+        cursor.execute(f"SELECT name, img FROM products WHERE cat_id = {id_} LIMIT 12 OFFSET {page*12};")
+        products = cursor.fetchall()
+
+    pages = (len(products) // 12)
+
+    return products, pages
 
 
 
+def get_same_level_sub(category_name):
+    cursor.execute("SELECT b.name \
+                    FROM (SELECT * FROM categories WHERE name = 'Tivi') a \
+                    RIGHT JOIN categories b \
+                    ON a.parent_id = b.parent_id \
+                    WHERE a.name IS NOT NULL;"
+                    )
+    result = cursor.fetchall()
+    return result 

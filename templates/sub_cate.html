@@ -1,14 +1,14 @@
-{%extends "index.html"%}
+{%extends "base.html"%}
 
 {%block content%}
 <div id="product-dropdown">
   <a href="" class="menu"><i class="fas fa-bars"></i> DANH MỤC SẢN PHẨM</a>
   <div id="dropdown-content">
-    {% for name, path in categories.items()%}
+    {% for name in sub_categories%}
       {%if 'Voucher' in categories%}
-      <a  href="{{ url_for('test', name=path) }}">{{name}}</a>
+      <a  href="{{ url_for('product', names=name[0]) }}">{{name[0]}}</a>
       {%else%}
-      <a  href="{{ url_for('test', name=path) }}">{{name}}</a>
+      <a  href="{{ url_for('product', names=name[0]) }}">{{name[0]}}</a>
       <hr>
       {%endif%}
     {%endfor%}
@@ -16,19 +16,26 @@
 </div>
 </header>  
 
-
 <section id="category">
-{% for name,path in categories.items()%}
-<div class="card" style="width: 22rem;">
-  <img src="{{img_dict[name]}}" class="card-img-top" alt="...">
+  {% for item in sub_categories%}
+  <div class="card border-info mb-3" style="width: 22rem;">  
+    <div class="card-body">
+      <h5 class="card-title">{{item[0]}}</h5>
+      <a href="{{ url_for('product', names=item[0]) }}" class="btn btn-primary">See More</a>
+    </div>
+  </div>
+  {%endfor%}
+  </section>
+
+<!-- <section id="products" style="display: none">
+{% for name in sub_categories%}
+<div class="card border-light md-3" id='item' style="width: 22rem;">
   <div class="card-body">
-    <h5 class="card-title">{{name}}</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="{{ url_for('test', name=path) }}" class="btn btn-primary">See More</a>
+    <h5 class="card-title">{{name[0]}}</h5>
+    <a href="{{ url_for('product', names=name[0]) }}" class="btn btn-primary">See More</a>
   </div>
 </div>
 {%endfor%}
-</section>
-
+</section> -->
 
 {%endblock%}
