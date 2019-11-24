@@ -61,14 +61,14 @@ header {
 }
 
 #search-bar .form input {
-    padding: 0 8px;
+    padding: 0 12px;
     line-height: 3;
     font-size: 13px;
     border-radius: 4px 0 0 4px;
     border-width: 0px;
 }
 
-#search-bar .form button {
+#search-bar .form .button {
     padding: 0 11px 0 15px;
     font-size: 14px;
     border: none;
@@ -168,6 +168,10 @@ header {
     grid-area: b;
 }
 
+#products .card:hover {
+    box-shadow: 4px 10px 15px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
 
 
 #category .card {

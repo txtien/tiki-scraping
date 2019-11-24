@@ -1,6 +1,15 @@
 {%extends "base.html"%}
 
 {%block content%}
+<div id="search-bar">
+    <a href="{{url_for('index')}}"><img src="/static/tiki.PNG" alt=""></a>
+    <img src="/static/tikinow.png" alt="">
+    <form action=" {{ url_for('product_search', names=names) }}" class="form">
+      <input type="text" name="search" size="100" placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn">
+      <input class="button" value="Search" type="submit">
+    </form> 
+  </div>
+  
 <div id="product-dropdown">
   <a href="" class="menu"><i class="fas fa-bars"></i> DANH MỤC SẢN PHẨM</a>
   <div id="dropdown-content">

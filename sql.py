@@ -2,7 +2,7 @@ import psycopg2
 from bs4 import BeautifulSoup
 import requests
 from collections import deque
-
+# Change user coderschool to postgres
 conn = psycopg2.connect(user="coderschool", database="tiki")
 conn.autocommit= True 
 cursor = conn.cursor()
@@ -36,27 +36,105 @@ def get_all_sub(category_id):
 
 
 def get_product(category_name,page, command = None):
-    cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{category_name}';")
-    id_ = cursor.fetchall()[0][0]
-    if len(get_all_sub(id_)) != 0:
-        cursor.execute(f"SELECT name, img FROM products WHERE cat_id IN {get_all_sub(id_)} LIMIT 12 OFFSET {page*12};")
-        products = cursor.fetchall()
+    if command is not None:
+        cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{category_name}';")
+        id_ = cursor.fetchall()[0][0]
+        if len(get_all_sub(id_)) != 0:
+            pages = 1
+
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)}  ORDER BY price {command} LIMIT 10;")
+            products = transfrom_data(cursor.fetchall())
+        else:
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_};")
+            full_page =  cursor.fetchall()
+            pages = int(len(full_page) / 12) + 1 
+
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} LIMIT 12 OFFSET { (page) *12};")
+            products = transfrom_data(cursor.fetchall())
+
+
     else:
-        cursor.execute(f"SELECT name, img FROM products WHERE cat_id = {id_} LIMIT 12 OFFSET {page*12};")
+        cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{category_name}';")
+        id_ = cursor.fetchall()[0][0]
+        if len(get_all_sub(id_)) != 0:
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)};")
+            full_page =  cursor.fetchall()
+            pages = int(len(full_page) / 12) + 1 
+
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)} LIMIT 12 OFFSET { (page) *12};")
+            products = transfrom_data(cursor.fetchall())
+        else:
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_};")
+            full_page =  cursor.fetchall()
+            pages = int(len(full_page) / 12) + 1 
+
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} LIMIT 12 OFFSET { (page) *12};")
+            products = transfrom_data(cursor.fetchall())
+
+    return products, pages
+
+
+# ----------------------------------------------------------------------------------
+
+def filter_product(keyword, page, name=None,):
+    if name is None:
+        cursor.execute(f"SELECT name, img FROM products WHERE name ILIKE '%{keyword}%';")
+        full_page =  cursor.fetchall()
+        pages = int(len(full_page) / 12) + 1 
+
+        cursor.execute(f"SELECT name, img FROM products WHERE name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
         products = cursor.fetchall()
 
-    pages = (len(products) // 12)
+    else:
+        cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{name}';")
+        id_ = cursor.fetchall()[0][0]
+        if len(get_all_sub(id_)) != 0:
+            cursor.execute(f"SELECT name, img FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '{keyword}%';")
+            full_page =  cursor.fetchall()
+            pages = int(len(full_page) / 12) + 1 
+ 
+            cursor.execute(f"SELECT name, img FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
+            products = cursor.fetchall()
+        else:
+            cursor.execute(f"SELECT name, img FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%';")
+            full_page =  cursor.fetchall()
+            pages = int(len(full_page) / 12) + 1 
+
+            cursor.execute(f"SELECT name, img FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
+            products = cursor.fetchall()
+    
 
     return products, pages
 
 
 
+
 def get_same_level_sub(category_name):
-    cursor.execute("SELECT b.name \
-                    FROM (SELECT * FROM categories WHERE name = 'Tivi') a \
-                    RIGHT JOIN categories b \
-                    ON a.parent_id = b.parent_id \
-                    WHERE a.name IS NOT NULL;"
-                    )
+    cursor.execute(f"SELECT name from categories WHERE parent_id = (SELECT parent_id FROM categories WHERE name = '{category_name}');")
     result = cursor.fetchall()
     return result 
+
+
+def transform_price(price):
+    price_str = str(price)
+    list_num = list(price_str[::-1])
+    
+    i = 0
+    while i < len(list_num):
+        i += 3
+        list_num.insert(i, '.')
+        i += 1
+    
+    res = ''.join(list_num[::-1]).strip('.') + 'đ'
+    return res
+
+
+def transfrom_data(data):
+    res = []
+    for product in data:
+        name = product[0]
+        img = product[1]
+        price = transform_price(product[2])
+        res.append((name,img,price))
+    return res 
+    
