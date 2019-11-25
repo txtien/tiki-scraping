@@ -5,11 +5,6 @@ import requests
 
 TIKI_URL = "https://tiki.vn"
 
-conn = psycopg2.connect(user = "coderschool",
-                       database = "tiki")
-
-conn.autocommit = True
-cursor = conn.cursor()
 
 def parse(url):
     try:
@@ -37,8 +32,8 @@ def create_categories_table():
 def create_products_table():
     query = f"""CREATE TABLE IF NOT EXISTS products(
             id SERIAL PRIMARY KEY, 
-            data-id INT, 
-            data-seller-id INT, 
+            data_id INT, 
+            data_seller_id INT, 
             name VARCHAR(255), 
             price INT, 
             img TEXT, 
@@ -138,7 +133,7 @@ def get_sub_categories(category, save_db=False):
         div_containers = s.findAll('div',{'class': 'list-group-item is-child'})
         for div in div_containers:
             sub_id = None
-            sub_name = get_and_clean_text(div)
+            sub_name = div.a.text
             sub_url = 'https://tiki.vn' + div.a.get('href')
             sub_parent_id = category.cat_id
             
@@ -284,6 +279,15 @@ def scrape_all(deepest_cate_list):
                 return
 
 def main():
+    user_name = input("Your postgres username: ")
+    database = input("Your database name: ")
+    password = input("Your password: ")
+    conn = psycopg2.connect(user = user_name,
+                       database = database, password = password)
+                    
+    conn.autocommit = True
+    global cursor
+    cursor = conn.cursor()
     parse(TIKI_URL)
     create_categories_table()
     create_products_table()
