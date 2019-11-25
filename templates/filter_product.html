@@ -25,6 +25,9 @@
                 <hr>
                 {%endfor%}
         {%endif%}
+        <a href="{{ url_for('product_searchpage', names=names, keyword=keyword, page='DESC')}}">Price: High to Low</a>
+        <hr>
+        <a href="{{ url_for('product_searchpage', names=names, keyword=keyword, page='ASC')}}">Price: Low to High</a>
     </div>
   </div>
   </header>  
@@ -35,7 +38,7 @@
       <img src="{{item[1]}}" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title">{{item[0]}}</h5>
-        <a href="#" class="btn btn-primary">See More</a>
+        <a href="#" class="btn btn-primary">{{item[2]}}</a>
       </div>
     </div>
     {%endfor%}

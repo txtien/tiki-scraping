@@ -9,6 +9,7 @@ cursor = conn.cursor()
 
 
 def get_categories():
+    # get 16 1st categories
     cursor.execute("SELECT name FROM categories WHERE 1 <= id AND id <= 16")
     categories = cursor.fetchall()
 
@@ -17,6 +18,7 @@ def get_categories():
 
 
 def get_sub_category(category_name):
+    # get sub of each 1st categories
     cursor.execute(f"SELECT b.name FROM categories a LEFT JOIN categories b ON a.id = b.parent_id WHERE a.name LIKE '{category_name}';")
     sub_categories = cursor.fetchall()
 
@@ -24,6 +26,7 @@ def get_sub_category(category_name):
 
 
 def get_all_sub(category_id):
+    # Define which deepest categories belong to each sub category
     cursor.execute(f"SELECT id FROM categories WHERE parent_id = {category_id};")
     subs = tuple(x[0] for x in cursor.fetchall())
     result = []
@@ -45,11 +48,9 @@ def get_product(category_name,page, command = None):
             cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)}  ORDER BY price {command} LIMIT 10;")
             products = transfrom_data(cursor.fetchall())
         else:
-            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_};")
-            full_page =  cursor.fetchall()
-            pages = int(len(full_page) / 12) + 1 
+            pages = 1
 
-            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} LIMIT 12 OFFSET { (page) *12};")
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} ORDER BY price {command} LIMIT 10;")
             products = transfrom_data(cursor.fetchall())
 
 
@@ -76,32 +77,39 @@ def get_product(category_name,page, command = None):
 
 # ----------------------------------------------------------------------------------
 
-def filter_product(keyword, page, name=None,):
-    if name is None:
-        cursor.execute(f"SELECT name, img FROM products WHERE name ILIKE '%{keyword}%';")
-        full_page =  cursor.fetchall()
-        pages = int(len(full_page) / 12) + 1 
+def filter_product(keyword, page, name, command=None):
+    if command is not None:
+        cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{name}';")
+        id_ = cursor.fetchall()[0][0]
+        if len(get_all_sub(id_)) != 0:
+            pages = 1
 
-        cursor.execute(f"SELECT name, img FROM products WHERE name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
-        products = cursor.fetchall()
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '%{keyword}%' ORDER BY price {command} LIMIT 10;")
+            products = transfrom_data(cursor.fetchall())
+        else:
+            pages = 1
 
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%' ORDER BY price {command} LIMIT 10;")
+            products = transfrom_data(cursor.fetchall())
+
+    
     else:
         cursor.execute(f"SELECT id FROM categories WHERE name LIKE '{name}';")
         id_ = cursor.fetchall()[0][0]
         if len(get_all_sub(id_)) != 0:
-            cursor.execute(f"SELECT name, img FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '{keyword}%';")
-            full_page =  cursor.fetchall()
-            pages = int(len(full_page) / 12) + 1 
- 
-            cursor.execute(f"SELECT name, img FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
-            products = cursor.fetchall()
-        else:
-            cursor.execute(f"SELECT name, img FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%';")
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '%{keyword}%';")
             full_page =  cursor.fetchall()
             pages = int(len(full_page) / 12) + 1 
 
-            cursor.execute(f"SELECT name, img FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
-            products = cursor.fetchall()
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id IN {get_all_sub(id_)} AND name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12 };")
+            products = transfrom_data(cursor.fetchall())
+        else:
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%';")
+            full_page =  cursor.fetchall()
+            pages = int(len(full_page) / 12) + 1 
+
+            cursor.execute(f"SELECT name, img, price FROM products WHERE cat_id = {id_} AND name ILIKE '%{keyword}%' LIMIT 12 OFFSET { (page) *12};")
+            products = transfrom_data(cursor.fetchall())
     
 
     return products, pages
