@@ -2,7 +2,11 @@
 - Web Crawler
 
 # 2. Description
-- Crawl 10 pages from each category in Tiki and store the data in Postgresql database. Then make some general analysis about Tiki.
+
+**Tiki Web Scraping** is a project to collect, organize, and store data about the available products on tiki.vn using Data Learning.
+
+The scope of the project covers 100.000 products in all the main categories and its first sub-categories. 
+
 
 # 3. Installation
 - You need to install Python, Flask, Postgresql, psycopg2, BeautifulSoup, Anaconda
@@ -16,13 +20,45 @@
 `conn = psycopg2.connect( user = "{your_username}",database = "{your_db_name"}, password = "{your__postgres_password})"`
 
 3. Crawl 10 pages from each category in Tiki and store the data in Postgresql database
-- Run scrape_store.py file in Terminal :`python scrape_store.py`
+- Run scrape_store.py file in Terminal: `python scrape_store.py`
 
 4. Now you have 2 tables : 'categories' and 'products'
-- See its schema in Postgres
+* Categories tables.
+
+| Field Name | Type | 
+| --------   | -------- |
+| ID | INTEGER | 
+| Name       | VARCHAR (255)|
+| Parent ID | INTEGER |
+
+* Product Table
+
+| Field Name | Type | 
+| --------   | -------- | 
+| ID | INTEGER |
+| Data ID | INTEGER 
+| Seller ID | INTEGER
+| Name      | VARCHAR (255)|
+| Price | INTEGER|
+| Image Link | TEXT
+| Category ID | INTEGER |
+
+![](https://i.imgur.com/U2ojQq0.jpg)
 
 5. Run `app.py` , open your browser, type your localhost address and explore
- 
+* app.py will :
+
+ Connect database to FlaskApp.  
+ Visualize database using html, CSS.  
+
+
+Some added features: 
+1. Main categories link to sub categories. 
+2. Price Filter: High to Low, Low to High. 
+3. Paginations. 
+4. Search tool. 
+
+You can see more details in python script files, I've commented on each function. 
 
 
 
