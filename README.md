@@ -15,14 +15,13 @@ The scope of the project covers 100.000 products in all the main categories and 
 # 4. Guide
 1. Log in your Postgresql user (say "your_username") and create a new database (say "your_db_name")
 
-2. Open scrape_store.py, at line 8 , change 
 
-`conn = psycopg2.connect( user = "{your_username}",database = "{your_db_name"}, password = "{your__postgres_password})"`
-
-3. Crawl 10 pages from each category in Tiki and store the data in Postgresql database
+2. Crawl 10 pages from each category in Tiki and store the data in Postgresql database
 - Run scrape_store.py file in Terminal: `python scrape_store.py`
+- Input your Postgresql user name, new database name and your password
+- Wait until done 
 
-4. Now you have 2 tables : 'categories' and 'products'
+3. Now you have 2 tables : 'categories' and 'products'
 * Categories tables.
 
 | Field Name | Type | 
@@ -45,7 +44,7 @@ The scope of the project covers 100.000 products in all the main categories and 
 
 ![](https://i.imgur.com/U2ojQq0.jpg)
 
-5. Run `app.py` , open your browser, type your localhost address and explore
+4. Run `app.py` , open your browser, type your localhost address and explore
 * app.py will :
 
  Connect database to FlaskApp.  
