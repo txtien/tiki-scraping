@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 from collections import deque
 # Change user coderschool to postgres
-conn = psycopg2.connect(user="coderschool", database="tiki")
+conn = psycopg2.connect(user="tien", database="tien", password='1')
 conn.autocommit= True 
 cursor = conn.cursor()
 

@@ -83,12 +83,12 @@ class Product:
         
     def save_into_db(self):
         query = f"""
-            INSERT INTO products (data_id, seller_id, name, price, img, cat_id) 
+            INSERT INTO products (data_id, data_seller_id, name, price, img, cat_id) 
             VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
         """
         val = (self.data_id, self.seller_id, self.name, self.price, self.img, self.cat_id)
         try:
-            cur.execute(query, val)
+            cursor.execute(query, val)
 #             #GET ID FROM NEW ROW 
 #             self.product_id = cur.fetchone()[0]
         except Exception as err:
@@ -214,10 +214,10 @@ def generate_deepest_cate_list():
     cursor.execute(query)
     deepest_cate_list = cursor.fetchall()
 
-    for sub_cate in sub_cate_list:
+    for sub_cate in deepest_cate_list:
         temp = list(sub_cate)
         temp[0] += '&page=1'
-        sub_cate_list[sub_cate_list.index(sub_cate)] = tuple(temp)
+        deepest_cate_list[deepest_cate_list.index(sub_cate)] = tuple(temp)
     return deepest_cate_list 
 
 # Run scrape fuction on every page
